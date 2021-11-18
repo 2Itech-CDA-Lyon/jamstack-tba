@@ -1,48 +1,24 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { User } from './types/api';
+import { Button, Container, Form } from 'react-bootstrap';
 
 function App() {
-  const [users, setUsers] = useState<User[]>([]);
-
-  const handleClick = () => {
-    fetch('/.netlify/functions/users')
-    .then(response => response.json())
-    .then(data => setUsers(data));
-  }
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <button onClick={handleClick}>
-          Fetch users
-        </button>
-        <ul>
-          {
-            users.map(
-              user => (
-                <li key={user.ref['@ref'].id}>
-                  {user.data.firstName} {user.data.lastName} ({user.data.email})
-                </li>
-              )
-            )
-          }
-        </ul>
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <Container>
+      <div>
+        La description du lieu dans lequel on se trouve actuellement
+      </div>
+      <Form>
+        <Form.Control
+          placeholder="Entrez votre commande ici"
+          type="text"
+        />
+        <Button
+          type="submit"
+          variant="primary"
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          Envoyer
+        </Button>
+      </Form>
+    </Container>
   );
 }
 
