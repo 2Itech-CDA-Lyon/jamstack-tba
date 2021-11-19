@@ -49,7 +49,6 @@ export const handler: Handler = async (event, context) => {
 
   const room = result.data[0];
 
-  try {
   const connections: { data: RoomConnection[] } = await faunaClient.query(
     fql.Map(
       fql.Paginate(
@@ -86,9 +85,5 @@ export const handler: Handler = async (event, context) => {
     headers: {
       'Content-Type': 'application/json'
     }
-  }
-  }
-  catch(error) {
-    console.error(error);
   }
 }
