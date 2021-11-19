@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Container, Form, Spinner } from 'react-bootstrap';
+import { Badge, Button, Card, Container, Form, Spinner } from 'react-bootstrap';
 import { Room } from './types/api';
 
 const startingRoomName = 'bedroom';
@@ -31,6 +31,28 @@ function App() {
       <p>
         {currentRoom.data.description}
       </p>
+      {currentRoom.data.connectionsFrom && (
+        <>
+          <Card>
+            <Card.Body className="d-flex gap-2">
+              <div>Available exits</div>
+              <ul className="d-flex gap-2">
+                {
+                  currentRoom.data.connectionsFrom.map(
+                    connection => (
+                      <li key={connection.ref['@ref'].id}>
+                        <Badge pill bg="primary">
+                          {connection.data.direction.data.name}
+                        </Badge>
+                      </li>
+                    )
+                  )
+                }
+              </ul>
+            </Card.Body>
+          </Card>
+        </>
+      )}
       <Form>
         <Form.Label>
           What do you want to do?

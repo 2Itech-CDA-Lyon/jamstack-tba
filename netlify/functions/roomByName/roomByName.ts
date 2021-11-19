@@ -1,6 +1,6 @@
 import { Handler } from "@netlify/functions";
 import faunaClient from "../../../scripts/fauna-client";
-import { Room } from "../../../src/types/api";
+import { Room, RoomConnection } from "../../../src/types/api";
 import { query as fql } from 'faunadb';
 
 export const handler: Handler = async (event, context) => {
@@ -47,6 +47,38 @@ export const handler: Handler = async (event, context) => {
     }
   }
 
+  const room = result.data[0];
+
+  try {
+  const connections: { data: RoomConnection[] } = await faunaClient.query(
+    fql.Map(
+      fql.Paginate(
+        fql.Match(
+          fql.Index('room_connections_by_from_room'),
+          // fql.Ref(fql.Collection('Room'), room.ref["@ref"].id),
+          room.ref
+        )
+      ),
+      fql.Lambda(
+        'ref',
+        fql.Let(
+          { connection: fql.Get(fql.Var('ref')) },
+          {
+            ref: fql.Select(['ref'], fql.Var('connection')),
+            ts: fql.Select(['ts'], fql.Var('connection')),
+            data: {
+              fromRoom: fql.Get(fql.Select(['data', 'fromRoom'], fql.Var('connection'))),
+              toRoom: fql.Get(fql.Select(['data', 'toRoom'], fql.Var('connection'))),
+              direction: fql.Get(fql.Select(['data', 'direction'], fql.Var('connection')))
+            }
+          }
+        )
+      )
+    )
+  )
+
+  room.data.connectionsFrom = connections.data;
+
   // Otherwise, return the room-s data
   return {
     statusCode: 200,
@@ -54,5 +86,9 @@ export const handler: Handler = async (event, context) => {
     headers: {
       'Content-Type': 'application/json'
     }
+  }
+  }
+  catch(error) {
+    console.error(error);
   }
 }

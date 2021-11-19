@@ -81,6 +81,23 @@ const run = async () => {
     )
   );
 
+  console.info('Creating room_connections_by_from_room...')
+  await faunaClient.query(
+    fql.If(
+      fql.Exists(
+        fql.Index('room_connections_by_from_room')
+      ),
+      null,
+      fql.CreateIndex({
+        name: 'room_connections_by_from_room',
+        source: fql.Collection('RoomConnection'),
+        terms: [
+          { field: ['data', 'fromRoom' ]},
+        ],
+      })
+    )
+  )
+
   console.info('Creating room_connection_by_from_room_and_direction...')
   await faunaClient.query(
     fql.If(
