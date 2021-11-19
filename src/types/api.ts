@@ -1,7 +1,6 @@
 import { FaunaEntity } from "./fauna";
 
-export type User = FaunaEntity<{
-  firstName: string;
-  lastName: string;
-  email: string;
+export type Room = FaunaEntity<{
+  name: string;
+  description: string;
 }>
